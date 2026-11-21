@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoVida | Aprende, Actúa y Cultiva tu Jardín Virtual</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans & Lora para un toque orgánico y moderno -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        eco: {
+                            dark: '#1F2E23',      // Texto oscuro legible
+                            forest: '#2E5A36',    // Verde bosque principal
+                            sage: '#4A7C59',      // Verde salvia secundario
+                            mint: '#8FC0A9',      // Verde menta suave
+                            cream: '#FAF3DD',     // Beige cálido fondo principal
+                            sand: '#F5EFE6',      // Arena suave para tarjetas/secciones
+                            earth: '#C89F77',     // Acento tierra / madera
+                            earthDark: '#9C734E', // Tierra oscuro para bordes/detalles
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Lora"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Animaciones orgánicas suaves para el Jardín Virtual y elementos naturales */
+        @keyframes sway {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2.5deg); }
+        }
+        @keyframes swaySlow {
+            0%, 100% { transform: rotate(1.5deg); }
+            50% { transform: rotate(-2deg); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            33% { transform: translateY(-8px) translateX(6px); }
+            66% { transform: translateY(-3px) translateX(-5px); }
+        }
+        @keyframes pulseSun {
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.06); opacity: 1; }
+        }
+        @keyframes sproutPop {
+            0% { transform: scale(0.4) translateY(15px); opacity: 0; }
+            70% { transform: scale(1.06) translateY(-2px); opacity: 1; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        @keyframes cloudDrift {
+            0% { transform: translateX(-15px); }
+            50% { transform: translateX(15px); }
+            100% { transform: translateX(-15px); }
+        }
+
+        .animate-sway {
+            transform-origin: bottom center;
+            animation: sway 4.5s ease-in-out infinite;
+        }
+        .animate-sway-slow {
+            transform-origin: bottom center;
+            animation: swaySlow 6s ease-in-out infinite;
+        }
+        .animate-float {
+            animation: float 5s ease-in-out infinite;
+        }
+        .animate-float-delayed {
+            animation: float 6.5s ease-in-out 2s infinite;
+        }
+        .animate-sun {
+            transform-origin: center;
+            animation: pulseSun 5s ease-in-out infinite;
+        }
+        .animate-cloud {
+            animation: cloudDrift 14s ease-in-out infinite;
+        }
+        .garden-stage-enter {
+            animation: sproutPop 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* Estilo personalizado para barras de desplazamiento */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5EFE6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #8FC0A9;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4A7C59;
+        }
+    </style>
+</head>
+<body class="bg-eco-cream text-eco-dark font-sans antialiased selection:bg-eco-mint selection:text-eco-dark">
+
+    <!-- Notificación Toast Flotante (Reemplazo elegante de alert) -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
+
+    <!-- Modal de Confirmación Personalizado -->
+    <div id="confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-eco-dark/50 backdrop-blur-sm p-4">
+        <div class="bg-eco-sand border-2 border-eco-earth/40 rounded-3xl max-w-md w-full p-6 shadow-2xl transform transition-all">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-full bg-eco-earth/20 flex items-center justify-center text-eco-earthDark">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <h3 id="modal-title" class="font-serif text-xl font-bold text-eco-dark">Confirmar acción</h3>
+            </div>
+            <p id="modal-message" class="text-eco-dark/80 text-sm leading-relaxed mb-6">¿Estás seguro de que deseas continuar?</p>
+            <div class="flex justify-end gap-3">
+                <button id="modal-cancel" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-eco-dark/70 hover:bg-eco-dark/5 transition">
+                    Cancelar
+                </button>
+                <button id="modal-confirm" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-eco-forest text-white hover:bg-eco-sage shadow-sm transition">
+                    Sí, continuar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. BARRA DE NAVEGACIÓN SUPERIOR -->
+    <header class="sticky top-0 z-40 bg-eco-cream/90 backdrop-blur-md border-b border-eco-forest/15">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-18 py-3">
+                <!-- Logo EcoVida -->
+                <a href="#inicio" class="flex items-center gap-2.5 group">
+                    <div class="w-10 h-10 rounded-2xl bg-eco-forest flex items-center justify-center text-eco-cream shadow-sm group-hover:bg-eco-sage transition-colors">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="font-serif text-xl sm:text-2xl font-bold text-eco-forest tracking-tight">EcoVida</span>
+                        <span class="hidden sm:block text-[11px] font-medium text-eco-sage -mt-1">Aprende & Cultiva</span>
+                    </div>
+                </a>
+
+                <!-- Enlaces de navegación (Escritorio) -->
+                <nav class="hidden md:flex items-center gap-1 bg-eco-sand/90 px-2 py-1.5 rounded-full border border-eco-forest/10">
+                    <a href="#guias" class="px-4 py-1.5 rounded-full text-sm font-semibold text-eco-dark/80 hover:text-eco-forest hover:bg-eco-cream transition">
+                        Guías Eco
+                    </a>
+                    <a href="#retos" class="px-4 py-1.5 rounded-full text-sm font-semibold text-eco-dark/80 hover:text-eco-forest hover:bg-eco-cream transition">
+                        Retos Ecológicos
+                    </a>
+                    <a href="#jardin" class="px-4 py-1.5 rounded-full text-sm font-semibold text-eco-dark/80 hover:text-eco-forest hover:bg-eco-cream transition">
+                        Mi Jardín Virtual
+                    </a>
+                </nav>
+
+                <!-- Indicador en vivo de EcoPuntos y Nivel -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <a href="#jardin" class="flex items-center gap-2.5 bg-eco-sand hover:bg-eco-mint/25 border border-eco-forest/20 px-3.5 py-1.5 rounded-2xl transition shadow-xs">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-eco-forest animate-pulse"></span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-eco-sage hidden sm:inline">Nivel <span id="nav-level-num">1</span></span>
+                            <span class="text-xs font-bold text-eco-sage sm:hidden">Nv.<span id="nav-level-num-mobile">1</span></span>
+                        </div>
+                        <div class="h-4 w-[1px] bg-eco-forest/20"></div>
+                        <div class="flex items-center gap-1 text-eco-forest font-bold text-sm">
+                            <svg class="w-4 h-4 text-eco-earthDark" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2L14.8 8.5L22 9.3L16.5 14L18.2 21L12 17.3L5.8 21L7.5 14L2 9.3L9.2 8.5L12 2Z"/>
+                            </svg>
+                            <span id="nav-points">0</span>
+                            <span class="text-xs font-medium text-eco-dark/70 hidden xs:inline">pts</span>
+                        </div>
+                    </a>
+
+                    <!-- Botón menú móvil -->
+                    <button id="mobile-menu-btn" aria-label="Abrir menú" class="md:hidden p-2.5 rounded-xl bg-eco-sand text-eco-forest hover:bg-eco-mint/30 transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Menú desplegable móvil -->
+            <div id="mobile-menu" class="hidden md:hidden pb-4 pt-2 border-t border-eco-forest/10">
+                <div class="flex flex-col gap-1.5">
+                    <a href="#guias" class="mobile-nav-link px-4 py-2.5 rounded-xl text-sm font-semibold text-eco-dark hover:bg-eco-sand transition">🌿 Guías Eco</a>
+                    <a href="#retos" class="mobile-nav-link px-4 py-2.5 rounded-xl text-sm font-semibold text-eco-dark hover:bg-eco-sand transition">🎯 Retos Ecológicos</a>
+                    <a href="#jardin" class="mobile-nav-link px-4 py-2.5 rounded-xl text-sm font-semibold text-eco-dark hover:bg-eco-sand transition">🌻 Mi Jardín Virtual</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. SECCIÓN HERO (INICIO) -->
+    <section id="inicio" class="relative overflow-hidden pt-10 pb-16 sm:pt-16 sm:pb-24">
+        <!-- Decoraciones botánicas sutiles de fondo -->
+        <div class="absolute top-10 left-4 text-eco-mint/30 pointer-events-none hidden lg:block">
+            <svg class="w-36 h-36" viewBox="0 0 100 100" fill="currentColor">
+                <path d="M50 5C25 25 15 55 30 85C60 80 85 50 50 5Z"/>
+            </svg>
+        </div>
+        <div class="absolute bottom-6 right-8 text-eco-earth/20 pointer-events-none hidden lg:block">
+            <svg class="w-44 h-44" viewBox="0 0 100 100" fill="currentColor">
+                <circle cx="50" cy="50" r="40"/>
+            </svg>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+                <!-- Columna de texto inspirador -->
+                <div class="lg:col-span-7 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-eco-mint/30 border border-eco-sage/30 text-eco-forest text-xs sm:text-sm font-semibold mb-6">
+                        <svg class="w-4 h-4 text-eco-forest" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                        </svg>
+                        <span>Pequeñas acciones diarias, grandes cambios reales</span>
+                    </div>
+
+                    <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-eco-dark leading-tight mb-6">
+                        Transforma tus hábitos y mira <span class="text-eco-forest underline decoration-eco-mint decoration-4 underline-offset-4">florecer</span> nuestro planeta.
+                    </h1>
+
+                    <p class="text-base sm:text-lg text-eco-dark/80 leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
+                        Bienvenido a <strong>EcoVida</strong>, tu espacio educativo e interactivo para aprender a cultivar en casa, reciclar correctamente, reutilizar materiales y ahorrar recursos. Completa retos diarios y haz crecer tu propio <strong>Jardín Virtual</strong>.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                        <a href="#guias" class="w-full sm:w-auto px-7 py-4 rounded-2xl bg-eco-forest text-white font-semibold text-base hover:bg-eco-sage transition shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                            <span>Explorar Guías Eco</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </a>
+                        <a href="#retos" class="w-full sm:w-auto px-7 py-4 rounded-2xl bg-eco-sand border-2 border-eco-forest/25 text-eco-forest font-semibold text-base hover:bg-eco-mint/20 transition flex items-center justify-center gap-2">
+                            <span>Ir a Retos y Mi Jardín</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <!-- Pilares rápidos -->
+                    <div class="grid grid-cols-3 gap-4 mt-10 pt-8 border-t border-eco-forest/15 max-w-lg mx-auto lg:mx-0">
+                        <div>
+                            <p class="font-serif text-2xl sm:text-3xl font-bold text-eco-forest">4</p>
+                            <p class="text-xs sm:text-sm text-eco-dark/70 font-medium">Guías Prácticas</p>
+                        </div>
+                        <div>
+                            <p class="font-serif text-2xl sm:text-3xl font-bold text-eco-sage">8</p>
+                            <p class="text-xs sm:text-sm text-eco-dark/70 font-medium">Retos Sostenibles</p>
+                        </div>
+                        <div>
+                            <p class="font-serif text-2xl sm:text-3xl font-bold text-eco-earthDark">5</p>
+                            <p class="text-xs sm:text-sm text-eco-dark/70 font-medium">Niveles de Jardín</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Visual: Tarjeta ilustrativa orgánica -->
+                <div class="lg:col-span-5">
+                    <div class="bg-eco-sand border-2 border-eco-forest/15 rounded-3xl p-6 sm:p-8 shadow-xl relative">
+                        <!-- Etiqueta flotante -->
+                        <div class="absolute -top-4 right-6 bg-eco-earth text-white text-xs font-bold px-4 py-1.5 rounded-full shadow">
+                            Aprender + Actuar = Crecer
+                        </div>
+
+                        <!-- Ilustración SVG Minimalista de Ecosistema -->
+                        <div class="bg-eco-cream rounded-2xl p-6 border border-eco-forest/10 mb-6 flex justify-center">
+                            <svg class="w-full max-w-[280px] h-auto" viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Sol cálido -->
+                                <circle cx="205" cy="45" r="24" fill="#F4D58D" class="animate-sun"/>
+                                <circle cx="205" cy="45" r="16" fill="#E8B84B"/>
+                                <!-- Nube suave -->
+                                <path d="M45 55C45 48.3726 50.3726 43 57 43C61.8 43 65.9 45.8 67.8 49.9C69.4 49.3 71.1 49 73 49C80.732 49 87 55.268 87 63H45C39.4772 63 35 58.5228 35 53C35 48.1 38.5 44 43.2 43.2" fill="#FFFFFF" opacity="0.85" class="animate-cloud"/>
+                                <!-- Colinas tierra y verde -->
+                                <path d="M10 175C45 135 115 135 160 175H10Z" fill="#8FC0A9"/>
+                                <path d="M95 175C140 130 210 130 250 175H95Z" fill="#4A7C59"/>
+                                <rect x="10" y="170" width="240" height="16" rx="8" fill="#C89F77"/>
+                                <!-- Brote central protagonista -->
+                                <g class="animate-sway">
+                                    <path d="M130 170V105" stroke="#2E5A36" stroke-width="5" stroke-linecap="round"/>
+                                    <path d="M130 135C110 135 98 120 100 105C116 105 130 118 130 135Z" fill="#4A7C59"/>
+                                    <path d="M130 122C150 122 162 107 160 92C144 92 130 105 130 122Z" fill="#2E5A36"/>
+                                    <!-- Flor superior -->
+                                    <circle cx="130" cy="94" r="11" fill="#FAF3DD"/>
+                                    <circle cx="130" cy="94" r="5" fill="#C89F77"/>
+                                </g>
+                                <!-- Gotas de agua -->
+                                <path d="M72 95C72 95 64 105 64 110C64 114.4 67.6 118 72 118C76.4 118 80 114.4 80 110C80 105 72 95 72 95Z" fill="#6BAED6" class="animate-float"/>
+                            </svg>
+                        </div>
+
+                        <h2 class="font-serif text-xl font-bold text-eco-dark mb-2">¿Cómo funciona EcoVida?</h2>
+                        <ul class="space-y-2.5 text-sm text-eco-dark/80">
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-5 h-5 rounded-full bg-eco-forest text-white text-xs flex items-center justify-center shrink-0 mt-0.5 font-bold">1</span>
+                                <span>Explora nuestras <strong>Guías Eco</strong> prácticas sobre huertos, reciclaje y ahorro.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-5 h-5 rounded-full bg-eco-sage text-white text-xs flex items-center justify-center shrink-0 mt-0.5 font-bold">2</span>
+                                <span>Acepta y marca <strong>Retos Ecológicos</strong> en tu rutina diaria para ganar EcoPuntos.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-5 h-5 rounded-full bg-eco-earthDark text-white text-xs flex items-center justify-center shrink-0 mt-0.5 font-bold">3</span>
+                                <span>Observa cómo <strong>tu Jardín Virtual evoluciona</strong> de una semilla a un bosque vivo.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. SECCIÓN EDUCATIVA: GUÍAS ECO -->
+    <section id="guias" class="py-16 sm:py-20 bg-eco-sand/70 border-y border-eco-forest/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Encabezado de sección -->
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="inline-block px-3.5 py-1 rounded-full bg-eco-forest/10 text-eco-forest text-xs font-bold uppercase tracking-wider mb-3">
+                    Conocimiento Práctico
+                </span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-eco-dark mb-4">
+                    Guías Eco Interactivas
+                </h2>
+                <p class="text-eco-dark/75 text-base sm:text-lg">
+                    Selecciona una categoría para descubrir consejos sencillos, pasos accionables y herramientas que puedes aplicar hoy mismo en tu hogar.
+                </p>
+            </div>
+
+            <!-- Pestañas Interactivas -->
+            <div role="tablist" aria-label="Categorías de Guías Eco" class="flex flex-wrap justify-center gap-2.5 sm:gap-3 mb-10">
+                <button onclick="switchGuideTab('huertos')" id="tab-huertos" class="guide-tab active-tab px-5 py-3 rounded-2xl text-sm font-bold flex items-center gap-2 transition shadow-xs bg-eco-forest text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19V6m0 0c-3.5 0-6 2.5-6 6 3.5 0 6-2.5 6-6zm0 4c3.5 0 6 2.5 6 6-3.5 0-6-2.5-6-6z"/></svg>
+                    <span>Huertos en Casa</span>
+                </button>
+                <button onclick="switchGuideTab('reciclaje')" id="tab-reciclaje" class="guide-tab px-5 py-3 rounded-2xl text-sm font-bold flex items-center gap-2 transition bg-eco-cream text-eco-dark/80 hover:bg-eco-mint/30 border border-eco-forest/15">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    <span>Reciclaje</span>
+                </button>
+                <button onclick="switchGuideTab('reutilizacion')" id="tab-reutilizacion" class="guide-tab px-5 py-3 rounded-2xl text-sm font-bold flex items-center gap-2 transition bg-eco-cream text-eco-dark/80 hover:bg-eco-mint/30 border border-eco-forest/15">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>Reutilización (DIY)</span>
+                </button>
+                <button onclick="switchGuideTab('ahorro')" id="tab-ahorro" class="guide-tab px-5 py-3 rounded-2xl text-sm font-bold flex items-center gap-2 transition bg-eco-cream text-eco-dark/80 hover:bg-eco-mint/30 border border-eco-forest/15">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    <span>Ahorro de Recursos</span>
+                </button>
+            </div>
+
+            <!-- CONTENIDO DE LAS PESTAÑAS -->
+            <div class="bg-eco-cream rounded-3xl p-6 sm:p-10 border border-eco-forest/15 shadow-sm">
+                
+                <!-- PESTAÑA 1: HUERTOS EN CASA -->
+                <div id="content-huertos" class="guide-content">
+                    <div class="mb-8">
+                        <h3 class="font-serif text-2xl sm:text-3xl font-bold text-eco-forest mb-2">Tu Primer Huerto Urbano en 4 Pasos</h3>
+                        <p class="text-eco-dark/75">No necesitas un patio grande; una ventana soleada o un balcón pequeño son suficientes para cultivar tus propios alimentos frescos.</p>
+                    </div>
+
+                    <!-- Pasos del huerto -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+                        <div class="bg-eco-sand p-5 rounded-2xl border border-eco-forest/10">
+                            <div class="w-10 h-10 rounded-xl bg-eco-forest text-white font-bold flex items-center justify-center mb-3">01</div>
+                            <h4 class="font-bold text-lg text-eco-dark mb-1.5">Luz Solar</h4>
+                            <p class="text-sm text-eco-dark/75">Ubica tus macetas donde reciban al menos <strong>4 a 6 horas de luz directa</strong> al día (orientación sur o este es ideal).</p>
+                        </div>
+                        <div class="bg-eco-sand p-5 rounded-2xl border border-eco-forest/10">
+                            <div class="w-10 h-10 rounded-xl bg-eco-sage text-white font-bold flex items-center justify-center mb-3">02</div>
+                            <h4 class="font-bold text-lg text-eco-dark mb-1.5">Sustrato y Drenaje</h4>
+                            <p class="text-sm text-eco-dark/75">Usa macetas con orificios abajo. Mezcla <strong>60% tierra negra, 30% humus de lombriz y 10% perlita</strong> o fibra de coco.</p>
+                        </div>
+                        <div class="bg-eco-sand p-5 rounded-2xl border border-eco-forest/10">
+                            <div class="w-10 h-10 rounded-xl bg-eco-earthDark text-white font-bold flex items-center justify-center mb-3">03</div>
+                            <h4 class="font-bold text-lg text-eco-dark mb-1.5">Germinación</h4>
+                            <p class="text-sm text-eco-dark/75">Planta las semillas a una profundidad máxima de <strong>2 veces su tamaño</strong> y mantén la tierra húmeda sin encharcar.</p>
+                        </div>
+                        <div class="bg-eco-sand p-5 rounded-2xl border border-eco-forest/10">
+                            <div class="w-10 h-10 rounded-xl bg-eco-forest text-white font-bold flex items-center justify-center mb-3">04</div>
+                            <h4 class="font-bold text-lg text-eco-dark mb-1.5">Riego Inteligente</h4>
+                            <p class="text-sm text-eco-dark/75">Riega temprano en la mañana o al atardecer. Introduce un dedo 2 cm en la tierra: <strong>si sale seco, toca regar</strong>.</p>
+                        </div>
+                    </div>
+
+                    <!-- Cultivos fáciles para principiantes -->
+                    <h4 class="font-serif text-xl font-bold text-eco-dark mb-4">Cultivos Ideales para Principiantes</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Albahaca -->
+                        <div class="bg-white/80 rounded-2xl p-6 border border-eco-mint/50 hover:shadow-md transition">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-3xl">🌿</span>
+                                <span class="px-3 py-1 rounded-full bg-eco-mint/30 text-eco-forest text-xs font-bold">Cosecha: 30 días</span>
+                            </div>
+                            <h5 class="font-bold text-lg text-eco-dark mb-1">Albahaca Aromática</h5>
+                            <p class="text-sm text-eco-dark/75 mb-4">Crece rápido en macetas pequeñas. Poda las puntas superiores para que crezca frondosa y evita que florezca pronto.</p>
+                            <div class="text-xs text-eco-sage font-semibold flex gap-4">
+                                <span>☀️ Sol moderado</span>
+                                <span>💧 Riego frecuente</span>
+                            </div>
+                        </div>
+                        <!-- Tomate Cherry -->
+                        <div class="bg-white/80 rounded-2xl p-6 border border-eco-mint/50 hover:shadow-md transition">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-3xl">🍅</span>
+                                <span class="px-3 py-1 rounded-full bg-eco-earth/25 text-eco-earthDark text-xs font-bold">Cosecha: 60 días</span>
+                            </div>
+                            <h5 class="font-bold text-lg text-eco-dark mb-1">Tomate Cherry</h5>
+                            <p class="text-sm text-eco-dark/75 mb-4">Muy productivo en macetas de 10 litros. Necesita un tutor (vara de madera) para sostener sus tallos conforme crece.</p>
+                            <div class="text-xs text-eco-sage font-semibold flex gap-4">
+                                <span>☀️ Mucho sol (6h+)</span>
+                                <span>💧 Riego constante</span>
+                            </div>
+                        </div>
+                        <!-- Lechuga -->
+                        <div class="bg-white/80 rounded-2xl p-6 border border-eco-mint/50 hover:shadow-md transition">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-3xl">🥬</span>
+                                <span class="px-3 py-1 rounded-full bg-eco-mint/30 text-eco-forest text-xs font-bold">Cosecha: 45 días</span>
+                            </div>
+                            <h5 class="font-bold text-lg text-eco-dark mb-1">Lechuga de Hoja Suelta</h5>
+                            <p class="text-sm text-eco-dark/75 mb-4">Tolera semisombra y macetas poco profundas (15 cm). Puedes cortar las hojas exteriores y seguirá produciendo nuevas.</p>
+                            <div class="text-xs text-eco-sage font-semibold flex gap-4">
+                                <span>⛅ Semisombra</span>
+                                <span>💧 Tierra fresca</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PESTAÑA 2: RECICLAJE -->
+                <div id="content-reciclaje" class="guide-content hidden">
+                    <div class="mb-6">
+                        <h3 class="font-serif text-2xl sm:text-3xl font-bold text-eco-forest mb-2">Guía Visual de Separación de Residuos</h3>
+                        <p class="text-eco-dark/75">Haz clic en cada contenedor para ver qué materiales acepta y cuál es la regla clave antes de depositarlos.</p>
+                    </div>
+
+                    <!-- Selector interactivo de contenedores -->
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
+                        <button onclick="selectBin('organico')" id="bin-btn-organico" class="bin-btn p-4 rounded-2xl border-2 border-eco-forest bg-eco-forest/10 text-left transition">
+                            <span class="text-2xl block mb-1">🍎</span>
+                            <span class="font-bold text-sm text-eco-dark block">Orgánico</span>
+                            <span class="text-xs text-eco-forest font-medium">Biodegradable</span>
+                        </button>
+                        <button onclick="selectBin('papel')" id="bin-btn-papel" class="bin-btn p-4 rounded-2xl border-2 border-transparent bg-eco-sand hover:border-eco-forest/30 text-left transition">
+                            <span class="text-2xl block mb-1">📦</span>
+                            <span class="font-bold text-sm text-eco-dark block">Papel y Cartón</span>
+                            <span class="text-xs text-eco-dark/60 font-medium">Fibras limpias</span>
+                        </button>
+                        <button onclick="selectBin('plasticos')" id="bin-btn-plasticos" class="bin-btn p-4 rounded-2xl border-2 border-transparent bg-eco-sand hover:border-eco-forest/30 text-left transition">
+                            <span class="text-2xl block mb-1">🧴</span>
+                            <span class="font-bold text-sm text-eco-dark block">Plástico y Metal</span>
+                            <span class="text-xs text-eco-dark/60 font-medium">Envases y latas</span>
+                        </button>
+                        <button onclick="selectBin('vidrio')" id="bin-btn-vidrio" class="bin-btn p-4 rounded-2xl border-2 border-transparent bg-eco-sand hover:border-eco-forest/30 text-left transition">
+                            <span class="text-2xl block mb-1">🫙</span>
+                            <span class="font-bold text-sm text-eco-dark block">Vidrio</span>
+                            <span class="text-xs text-eco-dark/60 font-medium">100% reciclable</span>
+                        </button>
+                        <button onclick="selectBin('especiales')" id="bin-btn-especiales" class="bin-btn p-4 rounded-2xl border-2 border-transparent bg-eco-sand hover:border-eco-forest/30 text-left transition col-span-2 sm:col-span-1">
+                            <span class="text-2xl block mb-1">🔋</span>
+                            <span class="font-bold text-sm text-eco-dark block">Especiales</span>
+                            <span class="text-xs text-eco-dark/60 font-medium">Punto limpio</span>
+                        </button>
+                    </div>
+
+                    <!-- Panel de detalle del contenedor seleccionado -->
+                    <div id="bin-detail-card" class="bg-eco-sand rounded-2xl p-6 border border-eco-forest/15">
+                        <!-- Se rellena dinámicamente con JS -->
+                    </div>
+                </div>
+
+                <!-- PESTAÑA 3: REUTILIZACIÓN (DIY) -->
+                <div id="content-reutilizacion" class="guide-content hidden">
+                    <div class="mb-8">
+                        <h3 class="font-serif text-2xl sm:text-3xl font-bold text-eco-forest mb-2">Ideas Creativas de Supraciclaje (DIY)</h3>
+                        <p class="text-eco-dark/75">Antes de reciclar un objeto, dale una segunda vida útil en casa con estos proyectos sencillos.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Proyecto 1 -->
+                        <div class="bg-eco-sand rounded-2xl p-6 border border-eco-earth/30 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="px-3 py-1 rounded-full bg-eco-mint/40 text-eco-forest text-xs font-bold">Dificultad: Fácil</span>
+                                    <span class="text-2xl">🪴</span>
+                                </div>
+                                <h4 class="font-serif text-xl font-bold text-eco-dark mb-2">Macetas de Autorriego con Botellas</h4>
+                                <p class="text-sm text-eco-dark/75 mb-4">Corta una botella PET por la mitad, invierte la parte superior con un cordón de algodón pasando por la tapa para absorber agua desde la base.</p>
+                            </div>
+                            <div class="pt-4 border-t border-eco-dark/10">
+                                <p class="text-xs font-bold text-eco-earthDark uppercase mb-1">Materiales:</p>
+                                <p class="text-xs text-eco-dark/80">1 botella de 1.5L, tijeras, cordón de algodón, tierra y semilla.</p>
+                            </div>
+                        </div>
+
+                        <!-- Proyecto 2 -->
+                        <div class="bg-eco-sand rounded-2xl p-6 border border-eco-earth/30 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="px-3 py-1 rounded-full bg-eco-mint/40 text-eco-forest text-xs font-bold">Dificultad: Fácil</span>
+                                    <span class="text-2xl">🫙</span>
+                                </div>
+                                <h4 class="font-serif text-xl font-bold text-eco-dark mb-2">Despensa Cero Residuos con Frascos</h4>
+                                <p class="text-sm text-eco-dark/75 mb-4">Reutiliza frascos de mermelada o café. Retira etiquetas remojando en agua tibia con bicarbonato y úsalos para almacenar granos, especias o semillas.</p>
+                            </div>
+                            <div class="pt-4 border-t border-eco-dark/10">
+                                <p class="text-xs font-bold text-eco-earthDark uppercase mb-1">Materiales:</p>
+                                <p class="text-xs text-eco-dark/80">Frascos de vidrio con tapa, bicarbonato, etiquetas de papel reciclado.</p>
+                            </div>
+                        </div>
+
+                        <!-- Proyecto 3 -->
+                        <div class="bg-eco-sand rounded-2xl p-6 border border-eco-earth/30 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="px-3 py-1 rounded-full bg-eco-earth/30 text-eco-earthDark text-xs font-bold">Dificultad: Media</span>
+                                    <span class="text-2xl">🌱</span>
+                                </div>
+                                <h4 class="font-serif text-xl font-bold text-eco-dark mb-2">Compostera Casera en Cubeta</h4>
+                                <p class="text-sm text-eco-dark/75 mb-4">Transforma restos de frutas, verduras y café en abono rico en nutrientes alternando capas húmedas (verdes) con capas secas (hojas o cartón sin tinta).</p>
+                            </div>
+                            <div class="pt-4 border-t border-eco-dark/10">
+                                <p class="text-xs font-bold text-eco-earthDark uppercase mb-1">Materiales:</p>
+                                <p class="text-xs text-eco-dark/80">Cubeta con tapa perforada, tierra, hojas secas y residuos orgánicos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PESTAÑA 4: AHORRO DE RECURSOS (CALCULADORA INTERACTIVA) -->
+                <div id="content-ahorro" class="guide-content hidden">
+                    <div class="mb-6">
+                        <h3 class="font-serif text-2xl sm:text-3xl font-bold text-eco-forest mb-2">Calculadora de Ahorro en el Hogar</h3>
+                        <p class="text-eco-dark/75">Marca los hábitos que aplicas o planeas adoptar esta semana para estimar el impacto mensual en agua y energía.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                        <!-- Checklist de hábitos -->
+                        <div class="lg:col-span-7 space-y-3" id="savings-checklist">
+                            <label class="flex items-center justify-between p-4 rounded-2xl bg-eco-sand border border-eco-forest/15 cursor-pointer hover:bg-eco-mint/20 transition">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" class="saving-checkbox w-5 h-5 accent-eco-forest rounded" data-water="1200" data-energy="0" checked>
+                                    <div>
+                                        <span class="font-bold text-sm sm:text-base text-eco-dark block">Reducir la ducha a 5 minutos</span>
+                                        <span class="text-xs text-eco-dark/65">Ahorra aprox. 40 litros por ducha diaria</span>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 text-blue-800 shrink-0">-1,200 L/mes</span>
+                            </label>
+
+                            <label class="flex items-center justify-between p-4 rounded-2xl bg-eco-sand border border-eco-forest/15 cursor-pointer hover:bg-eco-mint/20 transition">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" class="saving-checkbox w-5 h-5 accent-eco-forest rounded" data-water="540" data-energy="0" checked>
+                                    <div>
+                                        <span class="font-bold text-sm sm:text-base text-eco-dark block">Cerrar la llave al cepillar dientes o enjabonar platos</span>
+                                        <span class="text-xs text-eco-dark/65">Evita el desperdicio continuo de agua potable</span>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 text-blue-800 shrink-0">-540 L/mes</span>
+                            </label>
+
+                            <label class="flex items-center justify-between p-4 rounded-2xl bg-eco-sand border border-eco-forest/15 cursor-pointer hover:bg-eco-mint/20 transition">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" class="saving-checkbox w-5 h-5 accent-eco-forest rounded" data-water="0" data-energy="18">
+                                    <div>
+                                        <span class="font-bold text-sm sm:text-base text-eco-dark block">Desconectar cargadores y regletas en standby</span>
+                                        <span class="text-xs text-eco-dark/65">Elimina el "consumo vampiro" nocturno</span>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 shrink-0">-18 kWh/mes</span>
+                            </label>
+
+                            <label class="flex items-center justify-between p-4 rounded-2xl bg-eco-sand border border-eco-forest/15 cursor-pointer hover:bg-eco-mint/20 transition">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" class="saving-checkbox w-5 h-5 accent-eco-forest rounded" data-water="300" data-energy="25">
+                                    <div>
+                                        <span class="font-bold text-sm sm:text-base text-eco-dark block">Lavar ropa con carga completa y agua fría</span>
+                                        <span class="text-xs text-eco-dark/65">Reduce ciclos de lavado y calentamiento eléctrico</span>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-eco-mint/40 text-eco-forest shrink-0">-300L / -25kWh</span>
+                            </label>
+
+                            <label class="flex items-center justify-between p-4 rounded-2xl bg-eco-sand border border-eco-forest/15 cursor-pointer hover:bg-eco-mint/20 transition">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" class="saving-checkbox w-5 h-5 accent-eco-forest rounded" data-water="0" data-energy="32">
+                                    <div>
+                                        <span class="font-bold text-sm sm:text-base text-eco-dark block">Aprovechar luz natural y focos LED</span>
+                                        <span class="text-xs text-eco-dark/65">Apagar luces en habitaciones vacías</span>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 shrink-0">-32 kWh/mes</span>
+                            </label>
+                        </div>
+
+                        <!-- Tarjeta de resultados en vivo -->
+                        <div class="lg:col-span-5 bg-eco-forest text-eco-cream rounded-3xl p-6 sm:p-8 shadow-lg">
+                            <h4 class="font-serif text-xl font-bold mb-1">Tu Impacto Mensual Estimado</h4>
+                            <p class="text-eco-mint text-xs mb-6">Calculado según los hábitos seleccionados</p>
+
+                            <div class="space-y-4 mb-6">
+                                <div class="bg-white/10 rounded-2xl p-4 flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-2xl">💧</span>
+                                        <div>
+                                            <p class="text-xs text-eco-cream/80">Agua conservada</p>
+                                            <p class="text-2xl font-bold"><span id="total-water-saved">1,740</span> <span class="text-sm font-normal">Litros</span></p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs bg-white/15 px-2.5 py-1 rounded-lg">≈ <span id="water-bottles-eq">1,160</span> botellas</span>
+                                </div>
+
+                                <div class="bg-white/10 rounded-2xl p-4 flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-2xl">⚡</span>
+                                        <div>
+                                            <p class="text-xs text-eco-cream/80">Energía ahorrada</p>
+                                            <p class="text-2xl font-bold"><span id="total-energy-saved">0</span> <span class="text-sm font-normal">kWh</span></p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs bg-white/15 px-2.5 py-1 rounded-lg">≈ <span id="co2-saved">0</span> kg CO₂</span>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-eco-cream/85 leading-relaxed bg-eco-dark/25 p-3.5 rounded-xl">
+                                💡 <strong>Dato EcoVida:</strong> Si 100 familias aplicaran estos mismos hábitos, ahorrarían más de <strong>2 millones de litros de agua</strong> al año.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. SECCIÓN DE RETOS ECOLÓGICOS -->
+    <section id="retos" class="py-16 sm:py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+                <div>
+                    <span class="inline-block px-3.5 py-1 rounded-full bg-eco-earth/20 text-eco-earthDark text-xs font-bold uppercase tracking-wider mb-3">
+                        Acción Diaria
+                    </span>
+                    <h2 class="font-serif text-3xl sm:text-4xl font-bold text-eco-dark mb-2">
+                        Retos Ecológicos
+                    </h2>
+                    <p class="text-eco-dark/75 max-w-2xl">
+                        Completa estas misiones sostenibles para sumar <strong>EcoPuntos</strong> y hacer crecer tu Jardín Virtual en tiempo real.
+                    </p>
+                </div>
+
+                <!-- Controles y resumen rápido -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="bg-eco-sand px-4 py-2.5 rounded-2xl border border-eco-forest/15 text-sm font-semibold">
+                        Completados hoy: <span id="challenges-completed-count" class="text-eco-forest font-bold">0</span>/<span id="challenges-total-count">8</span>
+                    </div>
+                    <button onclick="confirmResetDailyChallenges()" class="px-4 py-2.5 rounded-2xl text-sm font-semibold text-eco-forest bg-eco-mint/30 hover:bg-eco-mint/50 transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        <span>Reiniciar retos del día</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filtro por frecuencia/categoría -->
+            <div class="flex flex-wrap gap-2 mb-8">
+                <button onclick="filterChallenges('todos')" data-filter="todos" class="challenge-filter-btn px-4 py-1.5 rounded-full text-xs font-bold bg-eco-forest text-white transition">Todos</button>
+                <button onclick="filterChallenges('Diario')" data-filter="Diario" class="challenge-filter-btn px-4 py-1.5 rounded-full text-xs font-bold bg-eco-sand text-eco-dark/80 hover:bg-eco-mint/30 transition">Retos Diarios</button>
+                <button onclick="filterChallenges('Semanal')" data-filter="Semanal" class="challenge-filter-btn px-4 py-1.5 rounded-full text-xs font-bold bg-eco-sand text-eco-dark/80 hover:bg-eco-mint/30 transition">Retos Semanales</button>
+            </div>
+
+            <!-- Cuadrícula de Retos (Renderizada por JS) -->
+            <div id="challenges-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <!-- Tarjetas de retos generadas dinámicamente -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. SECCIÓN "MI JARDÍN VIRTUAL" (GAMIFICACIÓN VISUAL) -->
+    <section id="jardin" class="py-16 sm:py-24 bg-eco-sand border-t border-eco-forest/15">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="inline-block px-3.5 py-1 rounded-full bg-eco-forest/15 text-eco-forest text-xs font-bold uppercase tracking-wider mb-3">
+                    Tu Progreso Vivo
+                </span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-eco-dark mb-3">
+                    Mi Jardín Virtual EcoVida
+                </h2>
+                <p class="text-eco-dark/75">
+                    Cada hábito sostenible nutre la tierra. Observa cómo tu ecosistema evoluciona desde unas semillas hasta un bosque lleno de vida.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+                
+                <!-- Lienzo Visual SVG Interactivo del Jardín (7 columnas) -->
+                <div class="lg:col-span-7 flex flex-col">
+                    <div class="bg-gradient-to-b from-[#E3F1E8] via-[#F2F7ED] to-[#FAF3DD] rounded-3xl border-2 border-eco-forest/20 shadow-lg overflow-hidden relative flex-grow flex flex-col justify-between">
+                        
+                        <!-- Barra superior del lienzo -->
+                        <div class="p-4 sm:p-5 flex flex-wrap items-center justify-between gap-2 z-10">
+                            <div class="inline-flex items-center gap-2 bg-white/85 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-eco-forest/15 shadow-xs">
+                                <span id="garden-badge-emoji" class="text-base">🌱</span>
+                                <span id="garden-stage-title" class="text-xs sm:text-sm font-bold text-eco-forest">Nivel 1: Tierra Fértil y Semillas</span>
+                            </div>
+                            <button onclick="waterGardenAnimation()" class="px-3.5 py-1.5 rounded-full bg-blue-500/15 hover:bg-blue-500/25 text-blue-900 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                                <span>💧 Regar jardín</span>
+                            </button>
+                        </div>
+
+                        <!-- ILUSTRACIÓN SVG DINÁMICA DEL JARDÍN -->
+                        <div class="w-full px-2 sm:px-4 pt-2 flex-grow flex items-end justify-center relative">
+                            <svg id="virtual-garden-svg" class="w-full h-auto max-h-[380px]" viewBox="0 0 600 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Cielo y Sol -->
+                                <g class="animate-sun">
+                                    <circle cx="510" cy="65" r="36" fill="#F6D88C" opacity="0.5"/>
+                                    <circle cx="510" cy="65" r="24" fill="#EBB844"/>
+                                </g>
+
+                                <!-- Nubes decorativas -->
+                                <g class="animate-cloud" opacity="0.85">
+                                    <path d="M95 75C95 66.7 101.7 60 110 60C115.8 60 120.8 63.3 123.3 68.1C125.4 67.4 127.6 67 130 67C139.9 67 148 75.1 148 85H95C88.4 85 83 79.6 83 73C83 66.9 87.6 61.8 93.5 61.1" fill="#FFFFFF"/>
+                                </g>
+
+                                <!-- Montañas suaves de fondo -->
+                                <path d="M0 265C80 190 190 190 280 265H0Z" fill="#CFE3D4"/>
+                                <path d="M220 265C320 175 460 175 600 265H220Z" fill="#B8D6C0"/>
+
+                                <!-- CAPA NIVEL 1: Tierra fértil, surcos y semillas (Siempre visible) -->
+                                <g id="stage-1-layer">
+                                    <!-- Colina principal de tierra -->
+                                    <path d="M0 275C160 245 440 245 600 275V340H0V275Z" fill="#C89F77"/>
+                                    <path d="M0 290C180 268 420 268 600 290V340H0V290Z" fill="#B38860"/>
+                                    <!-- Piedritas y semillas sembradas -->
+                                    <ellipse cx="140" cy="285" rx="7" ry="4" fill="#7D5A3C"/>
+                                    <ellipse cx="235" cy="292" rx="6" ry="3.5" fill="#7D5A3C"/>
+                                    <ellipse cx="345" cy="284" rx="7" ry="4" fill="#7D5A3C"/>
+                                    <ellipse cx="455" cy="290" rx="6" ry="3.5" fill="#7D5A3C"/>
+                                    <!-- Brote inicial pequeñito -->
+                                    <g class="animate-sway">
+                                        <path d="M300 276V258" stroke="#4A7C59" stroke-width="3.5" stroke-linecap="round"/>
+                                        <path d="M300 264C290 264 285 256 287 250C294 250 300 256 300 264Z" fill="#6BA378"/>
+                                        <path d="M300 261C310 261 315 253 313 247C306 247 300 253 300 261Z" fill="#4A7C59"/>
+                                    </g>
+                                </g>
+
+                                <!-- CAPA NIVEL 2: Primeros brotes verdes y pasto (Se desbloquea en Nivel 2) -->
+                                <g id="stage-2-layer" class="hidden">
+                                    <!-- Franja de césped tierno -->
+                                    <path d="M20 272C170 246 430 246 580 272C430 262 170 262 20 272Z" fill="#6BA378"/>
+                                    <!-- Brotes múltiples -->
+                                    <g class="animate-sway">
+                                        <path d="M140 278V248" stroke="#2E5A36" stroke-width="4" stroke-linecap="round"/>
+                                        <path d="M140 260C125 260 118 248 120 238C130 238 140 248 140 260Z" fill="#4A7C59"/>
+                                        <path d="M140 254C155 254 162 242 160 232C150 232 140 242 140 254Z" fill="#2E5A36"/>
+                                    </g>
+                                    <g class="animate-sway-slow">
+                                        <path d="M455 280V250" stroke="#2E5A36" stroke-width="4" stroke-linecap="round"/>
+                                        <path d="M455 262C440 262 433 250 435 240C445 240 455 250 455 262Z" fill="#4A7C59"/>
+                                        <path d="M455 256C470 256 477 244 475 234C465 234 455 244 455 256Z" fill="#2E5A36"/>
+                                    </g>
+                                    <!-- Briznas de hierba -->
+                                    <path d="M190 272L185 258M194 272L196 256M395 272L391 257M400 272L405 259" stroke="#4A7C59" stroke-width="2.5" stroke-linecap="round"/>
+                                </g>
+
+                                <!-- CAPA NIVEL 3: Plantas jóvenes y flores silvestres (Se desbloquea en Nivel 3) -->
+                                <g id="stage-3-layer" class="hidden">
+                                    <!-- Planta floral izquierda -->
+                                    <g class="animate-sway-slow">
+                                        <path d="M220 274V220" stroke="#2E5A36" stroke-width="4.5" stroke-linecap="round"/>
+                                        <path d="M220 248C204 248 196 236 198 226C210 226 220 236 220 248Z" fill="#4A7C59"/>
+                                        <!-- Flor coral/amarilla -->
+                                        <circle cx="220" cy="215" r="12" fill="#F28482"/>
+                                        <circle cx="220" cy="215" r="5" fill="#F6BD60"/>
+                                    </g>
+                                    <!-- Planta floral derecha -->
+                                    <g class="animate-sway">
+                                        <path d="M365 274V215" stroke="#2E5A36" stroke-width="4.5" stroke-linecap="round"/>
+                                        <path d="M365 244C381 244 389 232 387 222C375 222 365 232 365 244Z" fill="#4A7C59"/>
+                                        <!-- Flor lavanda/crema -->
+                                        <circle cx="365" cy="210" r="13" fill="#F6BD60"/>
+                                        <circle cx="365" cy="210" r="5.5" fill="#FFFFFF"/>
+                                    </g>
+                                    <!-- Pequeño arbusto central -->
+                                    <circle cx="290" cy="264" r="18" fill="#4A7C59"/>
+                                    <circle cx="310" cy="266" r="15" fill="#2E5A36"/>
+                                </g>
+
+                                <!-- CAPA NIVEL 4: Árbol joven, arbustos floridos y mariposas (Se desbloquea en Nivel 4) -->
+                                <g id="stage-4-layer" class="hidden">
+                                    <!-- Árbol frondoso a la izquierda -->
+                                    <g class="animate-sway-slow">
+                                        <path d="M95 275V185" stroke="#7D5A3C" stroke-width="11" stroke-linecap="round"/>
+                                        <path d="M95 215L75 195" stroke="#7D5A3C" stroke-width="6" stroke-linecap="round"/>
+                                        <circle cx="95" cy="162" r="42" fill="#2E5A36"/>
+                                        <circle cx="68" cy="176" r="28" fill="#4A7C59"/>
+                                        <circle cx="122" cy="176" r="28" fill="#4A7C59"/>
+                                        <circle cx="95" cy="142" r="26" fill="#6BA378"/>
+                                    </g>
+                                    <!-- Mariposa animada -->
+                                    <g class="animate-float">
+                                        <path d="M255 165C247 157 240 163 245 171C240 177 248 182 255 174Z" fill="#F28482"/>
+                                        <path d="M257 165C265 157 272 163 267 171C272 177 264 182 257 174Z" fill="#F6BD60"/>
+                                        <line x1="256" y1="163" x2="256" y2="177" stroke="#1F2E23" stroke-width="2" stroke-linecap="round"/>
+                                    </g>
+                                </g>
+
+                                <!-- CAPA NIVEL 5: Ecosistema EcoVida exuberante (Se desbloquea en Nivel 5) -->
+                                <g id="stage-5-layer" class="hidden">
+                                    <!-- Segundo árbol con frutos/flores a la derecha -->
+                                    <g class="animate-sway">
+                                        <path d="M510 276V175" stroke="#7D5A3C" stroke-width="12" stroke-linecap="round"/>
+                                        <circle cx="510" cy="148" r="46" fill="#2E5A36"/>
+                                        <circle cx="480" cy="166" r="30" fill="#4A7C59"/>
+                                        <circle cx="540" cy="166" r="30" fill="#4A7C59"/>
+                                        <!-- Frutos rojos/naranjas en el árbol -->
+                                        <circle cx="495" cy="145" r="5" fill="#F28482"/>
+                                        <circle cx="525" cy="155" r="5" fill="#F28482"/>
+                                        <circle cx="510" cy="130" r="5" fill="#F6BD60"/>
+                                    </g>
+                                    <!-- Abeja polinizadora -->
+                                    <g class="animate-float-delayed">
+                                        <ellipse cx="410" cy="145" rx="9" ry="6" fill="#F6BD60"/>
+                                        <path d="M407 140V150M413 140V150" stroke="#1F2E23" stroke-width="2"/>
+                                        <ellipse cx="408" cy="137" rx="4" ry="3" fill="#FFFFFF" opacity="0.85"/>
+                                    </g>
+                                    <!-- Arcoíris sutil de armonía -->
+                                    <path d="M160 155C220 95 360 95 420 155" stroke="#8FC0A9" stroke-width="4" stroke-linecap="round" opacity="0.45"/>
+                                    <path d="M172 162C225 108 355 108 408 162" stroke="#F6BD60" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+                                </g>
+
+                                <!-- Gotas de riego interactivas (ocultas por defecto) -->
+                                <g id="watering-drops" class="hidden">
+                                    <circle cx="150" cy="140" r="4" fill="#4A90E2"/>
+                                    <circle cx="220" cy="120" r="4" fill="#4A90E2"/>
+                                    <circle cx="300" cy="135" r="4" fill="#4A90E2"/>
+                                    <circle cx="380" cy="115" r="4" fill="#4A90E2"/>
+                                    <circle cx="450" cy="145" r="4" fill="#4A90E2"/>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel de Progreso, Insignias y Colección (5 columnas) -->
+                <div class="lg:col-span-5 flex flex-col justify-between bg-eco-cream rounded-3xl p-6 sm:p-8 border border-eco-forest/15 shadow-sm">
+                    <div>
+                        <!-- Resumen de puntos y nivel -->
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-wider text-eco-sage">Tu Puntuación Total</p>
+                                <p class="font-serif text-3xl sm:text-4xl font-bold text-eco-forest"><span id="garden-points">0</span> <span class="text-base font-sans font-semibold text-eco-dark/70">EcoPuntos</span></p>
+                            </div>
+                            <div class="w-14 h-14 rounded-2xl bg-eco-forest text-white flex flex-col items-center justify-center shadow">
+                                <span class="text-[10px] uppercase font-bold opacity-80">Nivel</span>
+                                <span id="garden-level-badge" class="text-xl font-bold leading-none">1</span>
+                            </div>
+                        </div>
+
+                        <!-- Barra de progreso hacia el siguiente nivel -->
+                        <div class="mb-6">
+                            <div class="flex justify-between text-xs font-semibold mb-1.5">
+                                <span id="progress-label-current" class="text-eco-dark/80">Progreso al Nivel 2</span>
+                                <span id="progress-label-points" class="text-eco-forest">0 / 50 pts</span>
+                            </div>
+                            <div class="w-full h-3.5 bg-eco-sand rounded-full overflow-hidden border border-eco-forest/15 p-0.5">
+                                <div id="garden-progress-bar" class="h-full bg-gradient-to-r from-eco-sage to-eco-forest rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Mensaje motivacional dinámico -->
+                        <div class="bg-eco-sand rounded-2xl p-4 border border-eco-earth/30 mb-6">
+                            <p id="garden-motivation-text" class="text-sm text-eco-dark/85 leading-relaxed">
+                                🌱 <strong>¡Tu tierra está lista!</strong> Completa tus primeros retos ecológicos para ver germinar los primeros brotes verdes.
+                            </p>
+                        </div>
+
+                        <!-- Colección de elementos desbloqueados en el jardín -->
+                        <div>
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-eco-dark/70 mb-3">Elementos del Ecosistema</h3>
+                            <div id="garden-unlockables" class="grid grid-cols-5 gap-2">
+                                <!-- Se genera dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botón discreto para reiniciar todo el progreso -->
+                    <div class="mt-8 pt-4 border-t border-eco-forest/10 flex items-center justify-between">
+                        <span class="text-xs text-eco-dark/55">Guardado automático en tu navegador</span>
+                        <button onclick="confirmFullReset()" class="text-xs font-semibold text-eco-earthDark hover:text-red-700 underline underline-offset-2 transition">
+                            Reiniciar progreso total
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. PIE DE PÁGINA (FOOTER) -->
+    <footer class="bg-eco-forest text-eco-cream pt-12 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-eco-cream/15">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <svg class="w-6 h-6 text-eco-mint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                        </svg>
+                        <span class="font-serif text-xl font-bold">EcoVida</span>
+                    </div>
+                    <p class="text-sm text-eco-cream/80 leading-relaxed">
+                        Plataforma educativa e interactiva dedicada a fomentar hábitos sostenibles, el cultivo urbano y el cuidado consciente de nuestros recursos naturales.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-sm uppercase tracking-wider text-eco-mint mb-3">Secciones</h4>
+                    <ul class="space-y-2 text-sm text-eco-cream/85">
+                        <li><a href="#inicio" class="hover:text-white transition">Inicio</a></li>
+                        <li><a href="#guias" class="hover:text-white transition">Guías Eco (Huertos, Reciclaje y Ahorro)</a></li>
+                        <li><a href="#retos" class="hover:text-white transition">Retos Ecológicos</a></li>
+                        <li><a href="#jardin" class="hover:text-white transition">Mi Jardín Virtual</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-sm uppercase tracking-wider text-eco-mint mb-3">Compromiso Ambiental</h4>
+                    <p class="text-sm text-eco-cream/80 leading-relaxed italic">
+                        "No heredamos la Tierra de nuestros ancestros, la tomamos prestada de nuestros hijos."
+                    </p>
+                </div>
+            </div>
+
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-eco-cream/70 gap-4">
+                <p>© 2026 EcoVida — Proyecto Educativo Ambiental.</p>
+                <p>Diseñado con conciencia ecológica 🌿</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LÓGICA DE APLICACIÓN E INTERACTIVIDAD -->
+    <script>
+        // ==========================================
+        // 1. DATOS DE CONTENIDO EDUCATIVO Y RETOS
+        // ==========================================
+        
+        const RECYCLING_BINS = {
+            organico: {
+                title: "Residuos Orgánicos (Contenedor Verde / Marrón)",
+                icon: "🍎",
+                examples: "Cáscaras de frutas y verduras, posos de café, bolsitas de té, cáscaras de huevo, restos de poda y hojas secas.",
+                rule: "Regla de oro: No mezcles aceites cocinados, plásticos ni colillas. Estos residuos son ideales para hacer composta casera.",
+                badge: "100% Compostable"
+            },
+            papel: {
+                title: "Papel y Cartón (Contenedor Azul)",
+                icon: "📦",
+                examples: "Cajas de cartón plegadas, hojas de cuaderno, periódicos, revistas, sobres de papel y bolsas de papel kraft.",
+                rule: "Regla de oro: Deben estar limpios y secos. El cartón manchado de grasa (como cajas de pizza con aceite) va a orgánico o basura general.",
+                badge: "Aplasta las cajas para ahorrar espacio"
+            },
+            plasticos: {
+                title: "Plásticos y Metales (Contenedor Amarillo)",
+                icon: "🧴",
+                examples: "Botellas PET, envases de champú o limpieza, latas de aluminio y conserva, tapas plásticas y briks limpios.",
+                rule: "Regla de oro: Enjuaga ligeramente los envases para evitar malos olores y aplástalos antes de depositarlos.",
+                badge: "Limpio, seco y aplastado"
+            },
+            vidrio: {
+                title: "Vidrio (Contenedor Verde Claro / Iglú)",
+                icon: "🫙",
+                examples: "Botellas de vidrio, frascos de mermeladas, conservas y tarros de cosméticos sin tapa.",
+                rule: "Regla de oro: Retira las tapas metálicas o plásticas (van al amarillo). No incluyas espejos, focos ni cerámica.",
+                badge: "Reciclable infinitas veces"
+            },
+            especiales: {
+                title: "Residuos Especiales (Puntos Limpios)",
+                icon: "🔋",
+                examples: "Pilas, baterías, teléfonos viejos, cables, focos ahorradores, medicamentos caducados y aceite de cocina usado.",
+                rule: "Regla de oro: Nunca los tires a la basura común ni al desagüe; una sola pila puede contaminar miles de litros de agua.",
+                badge: "Requiere manejo seguro"
+            }
+        };
+
+        const ECO_CHALLENGES = [
+            {
+                id: "c1",
+                title: "Bolsa Reutilizable",
+                category: "Diario",
+                description: "Lleva tu propia bolsa de tela o mochila al hacer compras y rechaza bolsas plásticas.",
+                points: 15,
+                icon: "🛍️"
+            },
+            {
+                id: "c2",
+                title: "Ducha de 5 Minutos",
+                category: "Diario",
+                description: "Cronometra tu baño diario para mantenerlo en 5 minutos o menos y cierra la llave al enjabonarte.",
+                points: 20,
+                icon: "🚿"
+            },
+            {
+                id: "c3",
+                title: "Separa tus Orgánicos",
+                category: "Diario",
+                description: "Separa las cáscaras de frutas, verduras y borra de café del resto de tus residuos hoy.",
+                points: 15,
+                icon: "🥕"
+            },
+            {
+                id: "c4",
+                title: "Cero Consumo Vampiro",
+                category: "Diario",
+                description: "Desconecta cargadores, pantallas o electrodomésticos que no estés utilizando antes de dormir.",
+                points: 15,
+                icon: "🔌"
+            },
+            {
+                id: "c5",
+                title: "Termo y Botella Propia",
+                category: "Diario",
+                description: "Evita comprar botellas de agua desechables o vasos de un solo uso durante todo el día.",
+                points: 20,
+                icon: "🥤"
+            },
+            {
+                id: "c6",
+                title: "Planta o Riega Vida",
+                category: "Semanal",
+                description: "Siembra una semilla en maceta, trasplanta un esqueje o cuida las plantas de tu hogar.",
+                points: 30,
+                icon: "🌱"
+            },
+            {
+                id: "c7",
+                title: "Día de Movilidad Verde",
+                category: "Semanal",
+                description: "Realiza tus trayectos cortos caminando, en bicicleta o usando transporte público.",
+                points: 25,
+                icon: "🚲"
+            },
+            {
+                id: "c8",
+                title: "Supraciclaje Creativo",
+                category: "Semanal",
+                description: "Reutiliza un frasco de vidrio, caja o botella plástica para darle una nueva función útil.",
+                points: 30,
+                icon: "♻️"
+            }
+        ];
+
+        const GARDEN_LEVELS = [
+            {
+                level: 1,
+                minPoints: 0,
+                maxPoints: 49,
+                title: "Nivel 1: Tierra Fértil y Semillas",
+                badgeEmoji: "🌰",
+                shortName: "Semillas",
+                motivation: "🌱 ¡Tu tierra está lista y nutrida! Completa retos ecológicos para germinar los primeros brotes verdes."
+            },
+            {
+                level: 2,
+                minPoints: 50,
+                maxPoints: 109,
+                title: "Nivel 2: Primeros Brotes Verdes",
+                badgeEmoji: "🌱",
+                shortName: "Brotes",
+                motivation: "🌿 ¡Excelente trabajo! Tus hábitos diarios ya dieron vida a los primeros brotes y césped fresco."
+            },
+            {
+                level: 3,
+                minPoints: 110,
+                maxPoints: 179,
+                title: "Nivel 3: Plantas Jóvenes y Flores",
+                badgeEmoji: "🌼",
+                shortName: "Flores",
+                motivation: "🌸 ¡Tu jardín empieza a llenarse de color! Las flores silvestres atraen vida gracias a tu constancia."
+            },
+            {
+                level: 4,
+                minPoints: 180,
+                maxPoints: 259,
+                title: "Nivel 4: Jardín Floreciente con Árboles",
+                badgeEmoji: "🌳",
+                shortName: "Árbol y Mariposa",
+                motivation: "🦋 ¡Increíble! Ha crecido un árbol frondoso y las mariposas ya visitan tu ecosistema EcoVida."
+            },
+            {
+                level: 5,
+                minPoints: 260,
+                maxPoints: 9999,
+                title: "Nivel 5: Ecosistema EcoVida Exuberante",
+                badgeEmoji: "🌈",
+                shortName: "Bosque Vivo",
+                motivation: "🌍 ¡Has alcanzado la armonía total! Tu jardín es un bosque vibrante lleno de árboles, frutos y polinizadores."
+            }
+        ];
+
+        // ==========================================
+        // 2. ESTADO DE LA APLICACIÓN (CON LOCALSTORAGE)
+        // ==========================================
+        const STORAGE_KEY = 'ecovida_user_state_v1';
+
+        let appState = {
+            points: 0,
+            completedChallengeIds: [],
+            currentFilter: 'todos'
+        };
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    appState.points = typeof parsed.points === 'number' ? parsed.points : 0;
+                    appState.completedChallengeIds = Array.isArray(parsed.completedChallengeIds) ? parsed.completedChallengeIds : [];
+                }
+            } catch (e) {
+                console.warn("No se pudo acceder a localStorage:", e);
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    points: appState.points,
+                    completedChallengeIds: appState.completedChallengeIds
+                }));
+            } catch (e) {
+                console.warn("No se pudo guardar en localStorage:", e);
+            }
+        }
+
+        // ==========================================
+        // 3. NOTIFICACIONES Y MODAL DE CONFIRMACIÓN
+        // ==========================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const bgClass = type === 'levelup' 
+                ? 'bg-eco-earthDark text-white border-eco-cream/40' 
+                : 'bg-eco-forest text-white border-eco-mint/40';
+
+            toast.className = `${bgClass} border px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-medium pointer-events-auto transform transition-all duration-300 translate-y-4 opacity-0`;
+            toast.innerHTML = `
+                <span class="text-lg">${type === 'levelup' ? '🎉' : '🌿'}</span>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3400);
+        }
+
+        let modalCallback = null;
+        function openConfirmModal(title, message, onConfirm) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            modalCallback = onConfirm;
+            const modal = document.getElementById('confirm-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirm-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            modalCallback = null;
+        }
+
+        document.getElementById('modal-cancel').addEventListener('click', closeConfirmModal);
+        document.getElementById('modal-confirm').addEventListener('click', () => {
+            if (typeof modalCallback === 'function') modalCallback();
+            closeConfirmModal();
+        });
+
+        // ==========================================
+        // 4. INTERACTIVIDAD DE GUÍAS ECO
+        // ==========================================
+        function switchGuideTab(tabName) {
+            // Actualizar estilos de pestañas
+            document.querySelectorAll('.guide-tab').forEach(btn => {
+                btn.classList.remove('bg-eco-forest', 'text-white', 'shadow-xs');
+                btn.classList.add('bg-eco-cream', 'text-eco-dark/80', 'border', 'border-eco-forest/15');
+            });
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-eco-cream', 'text-eco-dark/80', 'border', 'border-eco-forest/15');
+                activeBtn.classList.add('bg-eco-forest', 'text-white', 'shadow-xs');
+            }
+
+            // Mostrar contenido correspondiente
+            document.querySelectorAll('.guide-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            const activeContent = document.getElementById(`content-${tabName}`);
+            if (activeContent) {
+                activeContent.classList.remove('hidden');
+            }
+        }
+
+        function selectBin(binKey) {
+            const data = RECYCLING_BINS[binKey];
+            if (!data) return;
+
+            // Actualizar botones visuales
+            document.querySelectorAll('.bin-btn').forEach(btn => {
+                btn.classList.remove('border-eco-forest', 'bg-eco-forest/10');
+                btn.classList.add('border-transparent', 'bg-eco-sand');
+            });
+            const selectedBtn = document.getElementById(`bin-btn-${binKey}`);
+            if (selectedBtn) {
+                selectedBtn.classList.remove('border-transparent', 'bg-eco-sand');
+                selectedBtn.classList.add('border-eco-forest', 'bg-eco-forest/10');
+            }
+
+            // Renderizar detalle
+            const detailCard = document.getElementById('bin-detail-card');
+            detailCard.innerHTML = `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-eco-forest/10">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">${data.icon}</span>
+                        <h4 class="font-serif text-xl font-bold text-eco-dark">${data.title}</h4>
+                    </div>
+                    <span class="inline-block self-start sm:self-auto px-3 py-1 rounded-full bg-eco-forest text-white text-xs font-bold">${data.badge}</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-eco-cream p-4 rounded-xl">
+                        <p class="text-xs font-bold uppercase tracking-wider text-eco-sage mb-1">¿Qué depositar aquí?</p>
+                        <p class="text-sm text-eco-dark/85 leading-relaxed">${data.examples}</p>
+                    </div>
+                    <div class="bg-eco-cream p-4 rounded-xl border-l-4 border-eco-earth">
+                        <p class="text-xs font-bold uppercase tracking-wider text-eco-earthDark mb-1">Consejo de preparación</p>
+                        <p class="text-sm text-eco-dark/85 leading-relaxed">${data.rule}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Calculadora de Ahorro en el Hogar
+        function updateSavingsCalculator() {
+            const checkboxes = document.querySelectorAll('.saving-checkbox');
+            let totalWater = 0;
+            let totalEnergy = 0;
+
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    totalWater += parseInt(cb.dataset.water || 0, 10);
+                    totalEnergy += parseInt(cb.dataset.energy || 0, 10);
+                }
+            });
+
+            document.getElementById('total-water-saved').textContent = totalWater.toLocaleString('es-MX');
+            document.getElementById('water-bottles-eq').textContent = Math.round(totalWater / 1.5).toLocaleString('es-MX');
+            document.getElementById('total-energy-saved').textContent = totalEnergy.toLocaleString('es-MX');
+            // Factor promedio aprox. 0.4 kg CO2 por kWh
+            document.getElementById('co2-saved').textContent = (totalEnergy * 0.4).toFixed(1);
+        }
+
+        // ==========================================
+        // 5. LÓGICA DE RETOS Y JARDÍN VIRTUAL
+        // ==========================================
+        function getCurrentLevelObj(points) {
+            for (let i = GARDEN_LEVELS.length - 1; i >= 0; i--) {
+                if (points >= GARDEN_LEVELS[i].minPoints) {
+                    return GARDEN_LEVELS[i];
+                }
+            }
+            return GARDEN_LEVELS[0];
+        }
+
+        function toggleChallenge(challengeId) {
+            const challenge = ECO_CHALLENGES.find(c => c.id === challengeId);
+            if (!challenge) return;
+
+            const prevLevel = getCurrentLevelObj(appState.points).level;
+            const index = appState.completedChallengeIds.indexOf(challengeId);
+
+            if (index === -1) {
+                // Completar reto
+                appState.completedChallengeIds.push(challengeId);
+                appState.points += challenge.points;
+                showToast(`¡Reto completado! +${challenge.points} EcoPuntos ganados.`);
+
+                const newLevel = getCurrentLevelObj(appState.points).level;
+                if (newLevel > prevLevel) {
+                    setTimeout(() => {
+                        showToast(`¡Tu Jardín Virtual subió al Nivel ${newLevel}!`, 'levelup');
+                    }, 600);
+                }
+            } else {
+                // Desmarcar reto
+                appState.completedChallengeIds.splice(index, 1);
+                appState.points = Math.max(0, appState.points - challenge.points);
+                showToast(`Reto desmarcado (-${challenge.points} EcoPuntos).`);
+            }
+
+            saveState();
+            renderChallenges();
+            updateGardenUI();
+        }
+
+        function filterChallenges(filterType) {
+            appState.currentFilter = filterType;
+            document.querySelectorAll('.challenge-filter-btn').forEach(btn => {
+                if (btn.dataset.filter === filterType) {
+                    btn.classList.remove('bg-eco-sand', 'text-eco-dark/80');
+                    btn.classList.add('bg-eco-forest', 'text-white');
+                } else {
+                    btn.classList.remove('bg-eco-forest', 'text-white');
+                    btn.classList.add('bg-eco-sand', 'text-eco-dark/80');
+                }
+            });
+            renderChallenges();
+        }
+
+        function renderChallenges() {
+            const grid = document.getElementById('challenges-grid');
+            const filtered = appState.currentFilter === 'todos' 
+                ? ECO_CHALLENGES 
+                : ECO_CHALLENGES.filter(c => c.category === appState.currentFilter);
+
+            grid.innerHTML = filtered.map(challenge => {
+                const isDone = appState.completedChallengeIds.includes(challenge.id);
+                return `
+                    <div class="rounded-3xl p-5 border-2 transition-all flex flex-col justify-between ${
+                        isDone 
+                        ? 'bg-eco-mint/20 border-eco-forest shadow-xs' 
+                        : 'bg-eco-sand border-eco-forest/10 hover:border-eco-sage/50 hover:shadow-md'
+                    }">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide ${
+                                    challenge.category === 'Diario' 
+                                    ? 'bg-eco-cream text-eco-forest' 
+                                    : 'bg-eco-earth/25 text-eco-earthDark'
+                                }">${challenge.category}</span>
+                                <span class="text-xs font-extrabold text-eco-forest bg-white/80 px-2.5 py-1 rounded-full border border-eco-forest/15">
+                                    +${challenge.points} pts
+                                </span>
+                            </div>
+
+                            <div class="flex items-center gap-2.5 mb-2">
+                                <span class="text-2xl">${challenge.icon}</span>
+                                <h3 class="font-bold text-base text-eco-dark leading-snug">${challenge.title}</h3>
+                            </div>
+
+                            <p class="text-xs sm:text-sm text-eco-dark/75 leading-relaxed mb-5">
+                                ${challenge.description}
+                            </p>
+                        </div>
+
+                        <button onclick="toggleChallenge('${challenge.id}')" class="w-full py-2.5 px-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition cursor-pointer ${
+                            isDone
+                            ? 'bg-eco-forest text-white hover:bg-eco-sage'
+                            : 'bg-eco-cream text-eco-forest border border-eco-forest/25 hover:bg-eco-forest hover:text-white'
+                        }">
+                            ${isDone 
+                                ? `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>¡Completado!</span>`
+                                : `<span>Completar reto</span>`
+                            }
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            // Actualizar contadores
+            document.getElementById('challenges-completed-count').textContent = appState.completedChallengeIds.length;
+            document.getElementById('challenges-total-count').textContent = ECO_CHALLENGES.length;
+        }
+
+        function updateGardenUI() {
+            const pts = appState.points;
+            const levelObj = getCurrentLevelObj(pts);
+
+            // Actualizar cabecera (Navbar)
+            document.getElementById('nav-points').textContent = pts;
+            document.getElementById('nav-level-num').textContent = levelObj.level;
+            document.getElementById('nav-level-num-mobile').textContent = levelObj.level;
+
+            // Actualizar panel del jardín
+            document.getElementById('garden-points').textContent = pts;
+            document.getElementById('garden-level-badge').textContent = levelObj.level;
+            document.getElementById('garden-badge-emoji').textContent = levelObj.badgeEmoji;
+            document.getElementById('garden-stage-title').textContent = levelObj.title;
+            document.getElementById('garden-motivation-text').textContent = levelObj.motivation;
+
+            // Calcular barra de progreso hacia el siguiente nivel
+            const progressBar = document.getElementById('garden-progress-bar');
+            const labelCurrent = document.getElementById('progress-label-current');
+            const labelPoints = document.getElementById('progress-label-points');
+
+            if (levelObj.level < 5) {
+                const nextLevel = GARDEN_LEVELS[levelObj.level]; // índice = levelObj.level
+                const range = nextLevel.minPoints - levelObj.minPoints;
+                const currentInLevel = pts - levelObj.minPoints;
+                const percentage = Math.min(100, Math.max(4, Math.round((currentInLevel / range) * 100)));
+
+                progressBar.style.width = `${percentage}%`;
+                labelCurrent.textContent = `Progreso al Nivel ${nextLevel.level}`;
+                labelPoints.textContent = `${pts} / ${nextLevel.minPoints} pts`;
+            } else {
+                progressBar.style.width = '100%';
+                labelCurrent.textContent = '¡Nivel Máximo Alcanzado!';
+                labelPoints.textContent = `${pts} pts (Ecosistema Completo)`;
+            }
+
+            // Mostrar/Ocultar capas SVG según el nivel alcanzado
+            for (let lvl = 2; lvl <= 5; lvl++) {
+                const layer = document.getElementById(`stage-${lvl}-layer`);
+                if (!layer) continue;
+                if (levelObj.level >= lvl) {
+                    if (layer.classList.contains('hidden')) {
+                        layer.classList.remove('hidden');
+                        layer.classList.add('garden-stage-enter');
+                    }
+                } else {
+                    layer.classList.add('hidden');
+                    layer.classList.remove('garden-stage-enter');
+                }
+            }
+
+            // Renderizar insignias de colección desbloqueadas
+            const unlockablesContainer = document.getElementById('garden-unlockables');
+            unlockablesContainer.innerHTML = GARDEN_LEVELS.map(item => {
+                const unlocked = levelObj.level >= item.level;
+                return `
+                    <div class="flex flex-col items-center p-2 rounded-2xl border text-center transition ${
+                        unlocked 
+                        ? 'bg-eco-sand border-eco-forest/30 opacity-100' 
+                        : 'bg-eco-sand/40 border-eco-dark/10 opacity-45 grayscale'
+                    }" title="${item.title}">
+                        <span class="text-xl mb-1">${unlocked ? item.badgeEmoji : '🔒'}</span>
+                        <span class="text-[10px] font-bold text-eco-dark leading-tight">${item.shortName}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Animación interactiva de regar el jardín
+        function waterGardenAnimation() {
+            const drops = document.getElementById('watering-drops');
+            drops.classList.remove('hidden');
+            drops.classList.add('animate-bounce');
+            showToast("💧 ¡Has regado tu Jardín Virtual!");
+            setTimeout(() => {
+                drops.classList.add('hidden');
+                drops.classList.remove('animate-bounce');
+            }, 1800);
+        }
+
+        // Reiniciar solo los retos marcados hoy (conservando EcoPuntos históricos si el usuario quiere volver a hacerlos)
+        function confirmResetDailyChallenges() {
+            if (appState.completedChallengeIds.length === 0) {
+                showToast("Aún no tienes retos marcados para reiniciar.");
+                return;
+            }
+            openConfirmModal(
+                "Reiniciar retos del día",
+                "Esto desmarcará los retos actuales para que puedas volver a completarlos mañana, conservando tus EcoPuntos acumulados. ¿Deseas continuar?",
+                () => {
+                    appState.completedChallengeIds = [];
+                    saveState();
+                    renderChallenges();
+                    showToast("Retos listos para una nueva jornada 🌱");
+                }
+            );
+        }
+
+        // Reiniciar todo el progreso desde cero
+        function confirmFullReset() {
+            openConfirmModal(
+                "Reiniciar todo el progreso",
+                "¿Estás seguro de que quieres volver tus EcoPuntos a 0 y regresar tu Jardín Virtual al Nivel 1?",
+                () => {
+                    appState.points = 0;
+                    appState.completedChallengeIds = [];
+                    saveState();
+                    renderChallenges();
+                    updateGardenUI();
+                    showToast("Progreso reiniciado desde cero.");
+                }
+            );
+        }
+
+        // ==========================================
+        // 6. INICIALIZACIÓN AL CARGAR LA PÁGINA
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+
+            // Inicializar reciclaje y calculadora
+            selectBin('organico');
+            updateSavingsCalculator();
+            document.querySelectorAll('.saving-checkbox').forEach(cb => {
+                cb.addEventListener('change', updateSavingsCalculator);
+            });
+
+            // Inicializar retos y jardín
+            renderChallenges();
+            updateGardenUI();
+
+            // Menú móvil
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+            });
+        });
+    </script>
+</body>
+</html>
